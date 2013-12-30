@@ -1,0 +1,1 @@
+require 'fancytree/rails'

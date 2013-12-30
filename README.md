@@ -19,7 +19,27 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+In your Gemfile, add:
+
+
+```ruby
+gem 'fancytree-rails'
+```
+
+Note that also [jquery-ui-rails](https://github.com/joliss/jquery-ui-rails) needs to be available.
+
+Require javascript to ```app/assets/javascripts/application.js```:
+
+```
+//= require fancytree
+```
+
+Extend stylesheet assets ```app/assets/stylesheets/application.css```
+by:
+
+```
+*= require fancytree
+```
 
 ## Contributing
 
