@@ -38,7 +38,7 @@ Extend stylesheet assets ```app/assets/stylesheets/application.css```
 by:
 
 ```
-*= require fancytree
+*= require ui.fancytree
 ```
 
 ## Contributing
