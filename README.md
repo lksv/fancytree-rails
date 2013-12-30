@@ -34,6 +34,8 @@ Require javascript to ```app/assets/javascripts/application.js```:
 //= require fancytree
 ```
 
+In case you want to use *gridnav* add also ```//=require fancytree/jquery.fancytree.gridnav.js```
+
 Extend stylesheet assets ```app/assets/stylesheets/application.css```
 by:
 
