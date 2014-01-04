@@ -8,7 +8,7 @@
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
  * @version 2.0.0-5
- * @date 2013-12-23T10:11
+ * @date 2014-01-04T16:42
  */
 
 // Start of local namespace

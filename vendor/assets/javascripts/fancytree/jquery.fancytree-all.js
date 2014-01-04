@@ -8,7 +8,7 @@
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
  * @version 2.0.0-5
- * @date 2013-12-23T10:11
+ * @date 2014-01-04T16:42
  */
 
 // Start of local namespace
@@ -3726,7 +3726,7 @@ if( typeof define === "function" && define.amd ) {
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
  * @version 2.0.0-5
- * @date 2013-12-23T10:11
+ * @date 2014-01-04T16:42
  */
 
 ;(function($, window, document, undefined) {
@@ -3875,7 +3875,7 @@ $.ui.fancytree.registerExtension("columnview", {
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
  * @version 2.0.0-5
- * @date 2013-12-23T10:11
+ * @date 2014-01-04T16:42
  */
 
 ;(function($, window, document, undefined) {
@@ -4414,7 +4414,7 @@ $.ui.fancytree.registerExtension("dnd",
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
  * @version 2.0.0-5
- * @date 2013-12-23T10:11
+ * @date 2014-01-04T16:42
  */
 
 ;(function($, window, document, undefined) {
@@ -4571,7 +4571,7 @@ $.ui.fancytree.registerExtension("filter", {
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
  * @version 2.0.0-5
- * @date 2013-12-23T10:11
+ * @date 2014-01-04T16:42
  */
 
 ;(function($, window, document, undefined) {
@@ -4726,7 +4726,7 @@ $.ui.fancytree.registerExtension("menu", {
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
  * @version 2.0.0-5
- * @date 2013-12-23T10:11
+ * @date 2014-01-04T16:42
  */
 
 ;(function($, window, document, undefined) {
@@ -4986,7 +4986,7 @@ $.ui.fancytree.registerExtension("persist", {
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
  * @version 2.0.0-5
- * @date 2013-12-23T10:11
+ * @date 2014-01-04T16:42
  */
 
 ;(function($, window, document, undefined) {
@@ -5297,7 +5297,7 @@ $.ui.fancytree.registerExtension("table", {
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
  * @version 2.0.0-5
- * @date 2013-12-23T10:11
+ * @date 2014-01-04T16:42
  */
 
 ;(function($, window, document, undefined) {
