@@ -48,10 +48,10 @@ or if you want to use another style include it directly:
 *= require fancytree/skin-awesome/ui.fancytree
 ```
 Note that for awesome style (extension) to work you to:
-1) Add ```font-awesome-rails``` gem (and include its style in
-application.css)
-2) Enable ```awesome``` extension in Fancytree.
-3) Include extension code (```//= require fancytree/jquery.fancytree.awesome```) to ```app/assets/javascripts/application.js```.
+
+1. Add ```font-awesome-rails``` gem (and include its style in application.css)
+2. Enable ```awesome``` extension in Fancytree.
+3. Include extension code (```//= require fancytree/jquery.fancytree.awesome```) to ```app/assets/javascripts/application.js```.
 
 ## Contributing
 
