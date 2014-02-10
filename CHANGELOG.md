@@ -1,3 +1,8 @@
+## v2.0.0-6-1
+
+ * align versions with FancyTree
+ * v2.0.0-6 of FancyTree
+
 ## v0.0.2
 
 * fix icons paths

@@ -24,7 +24,7 @@ namespace :fancytree do
       end
 
       #following files are not in the build yet:
-      FileUtils.cp(['src/jquery.fancytree.gridnav.js', 'src/jquery.fancytree.awesome.js'], '../../vendor/assets/javascripts/fancytree')
+      FileUtils.cp(['src/jquery.fancytree.awesome.js'], '../../vendor/assets/javascripts/fancytree')
 
     end
   end
