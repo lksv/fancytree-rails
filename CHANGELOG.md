@@ -1,3 +1,7 @@
+## v2.0.0-11-1
+
+ * use fancytree v. 2.0.0-11
+
 ## v2.0.0-6-1
 
  * align versions with FancyTree

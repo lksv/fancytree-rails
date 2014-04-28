@@ -7,8 +7,9 @@ namespace :fancytree do
   task :update => :build do
     cd "tmp/fancytree" do
 
-      cd "build" do
-        FileUtils.cp(Dir.glob("*.js"), '../../../vendor/assets/javascripts/fancytree')
+      cd "dist" do
+        js = FileList['*'].exclude(/\Askip*/)
+        FileUtils.cp_r(js, '../../../vendor/assets/javascripts/fancytree')
 
         css_files = Dir.glob("skin*/*.css")
         css_files.each do |file|
@@ -23,17 +24,15 @@ namespace :fancytree do
         end
       end
 
-      #following files are not in the build yet:
-      FileUtils.cp(['src/jquery.fancytree.awesome.js'], '../../vendor/assets/javascripts/fancytree')
-
     end
   end
 
   task :build => "tmp/fancytree" do
     cd "tmp/fancytree" do
       #sh "npm install -g grunt-cli"
-      sh "npm install"
-      sh "grunt build --force" #foce because of tabfix
+      #Non needed any more, currnetyl ./dist contains compiled version for the release
+      # sh "npm install"
+      # sh "grunt build --force" #foce because of tabfix
     end
   end
 

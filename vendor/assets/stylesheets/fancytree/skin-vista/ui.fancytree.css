@@ -43,7 +43,7 @@ ul.fancytree-container {
   background-color: white;
   border: 1px dotted gray;
   overflow: auto;
-  height: 100%;
+  min-height: 0%;
 }
 ul.fancytree-container ul {
   padding: 0 0 0 16px;
@@ -173,7 +173,8 @@ span.fancytree-expander {
 .fancytree-exp-edl span.fancytree-expander:hover {
   background-position: -48px -96px;
 }
-.fancytree-loading span.fancytree-expander {
+.fancytree-loading span.fancytree-expander,
+.fancytree-loading span.fancytree-expander:hover {
   background-image: url("loading.gif");
   background-position: 0px 0px;
 }
@@ -272,8 +273,10 @@ span.fancytree-icon {
   background-position: -80px -16px;
 }
 /* Status node icons */
-.fancytree-statusnode-wait span.fancytree-icon {
+.fancytree-statusnode-wait span.fancytree-icon,
+.fancytree-statusnode-wait span.fancytree-icon:hover {
   background-image: url("loading.gif");
+  background-position: 0px 0px;
 }
 .fancytree-statusnode-error span.fancytree-icon {
   background-position: 0px -112px;
@@ -282,7 +285,8 @@ span.fancytree-icon {
  * Node titles and highlighting
  *----------------------------------------------------------------------------*/
 span.fancytree-node {
-  display: inline-block;
+  /* See #117 */
+  display: inherit;
   width: 100%;
 }
 span.fancytree-title {
@@ -294,6 +298,9 @@ span.fancytree-title {
   margin: 0px;
   margin-left: 3px;
   cursor: pointer;
+}
+span.fancytree-node.fancytree-error span.fancytree-title {
+  color: red;
 }
 /*------------------------------------------------------------------------------
  * Drag'n'drop support
@@ -352,6 +359,9 @@ span.fancytree-drop-target.fancytree-drop-accept a {
 table.fancytree-ext-table {
   border-collapse: collapse;
 }
+table.fancytree-ext-table span.fancytree-node {
+  display: inline-block;
+}
 /*------------------------------------------------------------------------------
  * 'columnview' extension
  *----------------------------------------------------------------------------*/
@@ -383,6 +393,7 @@ table.fancytree-ext-columnview tbody tr td > ul li {
 table.fancytree-ext-columnview span.fancytree-node {
   position: relative;
   /* allow positioning of embedded spans */
+  display: inline-block;
 }
 table.fancytree-ext-columnview span.fancytree-node.fancytree-expanded {
   background-color: #CBE8F6;
@@ -395,17 +406,33 @@ table.fancytree-ext-columnview .fancytree-has-children span.fancytree-cv-right {
 /*------------------------------------------------------------------------------
  * 'filter' extension
  *----------------------------------------------------------------------------*/
-.fancytree-ext-filter span.fancytree-node span.fancytree-title {
+.fancytree-ext-filter-dimm span.fancytree-node span.fancytree-title {
   color: silver;
   font-weight: lighter;
 }
-.fancytree-ext-filter span.fancytree-node.fancytree-submatch span.fancytree-title {
+.fancytree-ext-filter-dimm tr.fancytree-submatch span.fancytree-title,
+.fancytree-ext-filter-dimm span.fancytree-node.fancytree-submatch span.fancytree-title {
   color: black;
   font-weight: normal;
 }
-.fancytree-ext-filter span.fancytree-node.fancytree-match span.fancytree-title {
+.fancytree-ext-filter-dimm tr.fancytree-match span.fancytree-title,
+.fancytree-ext-filter-dimm span.fancytree-node.fancytree-match span.fancytree-title {
   color: black;
   font-weight: bold;
+}
+.fancytree-ext-filter-hide tr.fancytree-hide,
+.fancytree-ext-filter-hide span.fancytree-node.fancytree-hide {
+  display: none;
+}
+.fancytree-ext-filter-hide tr.fancytree-submatch span.fancytree-title,
+.fancytree-ext-filter-hide span.fancytree-node.fancytree-submatch span.fancytree-title {
+  color: silver;
+  font-weight: lighter;
+}
+.fancytree-ext-filter-hide tr.fancytree-match span.fancytree-title,
+.fancytree-ext-filter-hide span.fancytree-node.fancytree-match span.fancytree-title {
+  color: black;
+  font-weight: normal;
 }
 /*******************************************************************************
  * Styles specific to this skin.

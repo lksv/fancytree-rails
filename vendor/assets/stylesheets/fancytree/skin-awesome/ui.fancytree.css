@@ -27,7 +27,7 @@ ul.fancytree-container {
   background-color: white;
   border: 1px dotted gray;
   overflow: auto;
-  height: 100%;
+  min-height: 0%;
 }
 ul.fancytree-container ul {
   padding: 0 0 0 16px;
@@ -75,7 +75,6 @@ span.fancytree-drag-helper-img,
   vertical-align: top;
   background-repeat: no-repeat;
   background-position: left;
-  background-image: url("icons.gif");
   background-position: 0em 0em;
 }
 /* Used by iconclass option */
@@ -109,9 +108,6 @@ span.fancytree-expander {
   background-image: none;
   cursor: default;
 }
-.fancytree-loading span.fancytree-expander {
-  background-image: url("loading.gif");
-}
 /*------------------------------------------------------------------------------
  * Checkbox icon
  *----------------------------------------------------------------------------*/
@@ -141,14 +137,12 @@ span.fancytree-icon {
 /* Documents */
 /* Folders */
 /* Status node icons */
-.fancytree-statusnode-wait span.fancytree-icon {
-  background-image: url("loading.gif");
-}
 /*------------------------------------------------------------------------------
  * Node titles and highlighting
  *----------------------------------------------------------------------------*/
 span.fancytree-node {
-  display: inline-block;
+  /* See #117 */
+  display: inherit;
   width: 100%;
 }
 span.fancytree-title {
@@ -160,6 +154,9 @@ span.fancytree-title {
   margin: 0px;
   margin-left: 3px;
   cursor: pointer;
+}
+span.fancytree-node.fancytree-error span.fancytree-title {
+  color: red;
 }
 /*------------------------------------------------------------------------------
  * Drag'n'drop support
@@ -204,6 +201,9 @@ span.fancytree-drop-target.fancytree-drop-accept a {
 table.fancytree-ext-table {
   border-collapse: collapse;
 }
+table.fancytree-ext-table span.fancytree-node {
+  display: inline-block;
+}
 /*------------------------------------------------------------------------------
  * 'columnview' extension
  *----------------------------------------------------------------------------*/
@@ -235,6 +235,7 @@ table.fancytree-ext-columnview tbody tr td > ul li {
 table.fancytree-ext-columnview span.fancytree-node {
   position: relative;
   /* allow positioning of embedded spans */
+  display: inline-block;
 }
 table.fancytree-ext-columnview span.fancytree-node.fancytree-expanded {
   background-color: #CBE8F6;
@@ -246,17 +247,33 @@ table.fancytree-ext-columnview .fancytree-has-children span.fancytree-cv-right {
 /*------------------------------------------------------------------------------
  * 'filter' extension
  *----------------------------------------------------------------------------*/
-.fancytree-ext-filter span.fancytree-node span.fancytree-title {
+.fancytree-ext-filter-dimm span.fancytree-node span.fancytree-title {
   color: silver;
   font-weight: lighter;
 }
-.fancytree-ext-filter span.fancytree-node.fancytree-submatch span.fancytree-title {
+.fancytree-ext-filter-dimm tr.fancytree-submatch span.fancytree-title,
+.fancytree-ext-filter-dimm span.fancytree-node.fancytree-submatch span.fancytree-title {
   color: black;
   font-weight: normal;
 }
-.fancytree-ext-filter span.fancytree-node.fancytree-match span.fancytree-title {
+.fancytree-ext-filter-dimm tr.fancytree-match span.fancytree-title,
+.fancytree-ext-filter-dimm span.fancytree-node.fancytree-match span.fancytree-title {
   color: black;
   font-weight: bold;
+}
+.fancytree-ext-filter-hide tr.fancytree-hide,
+.fancytree-ext-filter-hide span.fancytree-node.fancytree-hide {
+  display: none;
+}
+.fancytree-ext-filter-hide tr.fancytree-submatch span.fancytree-title,
+.fancytree-ext-filter-hide span.fancytree-node.fancytree-submatch span.fancytree-title {
+  color: silver;
+  font-weight: lighter;
+}
+.fancytree-ext-filter-hide tr.fancytree-match span.fancytree-title,
+.fancytree-ext-filter-hide span.fancytree-node.fancytree-match span.fancytree-title {
+  color: black;
+  font-weight: normal;
 }
 /*******************************************************************************
  * Styles specific to this skin.
@@ -266,7 +283,4 @@ table.fancytree-ext-columnview .fancytree-has-children span.fancytree-cv-right {
 ul.fancytree-container ul {
   padding: 0.3em 0 0 1em;
   margin: 0;
-}
-.fancytree-container {
-  border: 5px solid green;
 }

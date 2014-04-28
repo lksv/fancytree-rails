@@ -1,5 +1,5 @@
 /*!
- * jquery.fancytree.awesome.js
+ * jquery.fancytree.glyph.js
  *
  * Use glyph fonts as instead of icon sprites.
  * (Extension module for jquery.fancytree.js: https://github.com/mar10/fancytree/)
@@ -9,8 +9,8 @@
  * Released under the MIT license
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
- * @version DEVELOPMENT
- * @date DEVELOPMENT
+ * @version 2.0.0-11
+ * @date 2014-04-27T22:28
  */
 
 ;(function($, window, document, undefined) {
@@ -26,8 +26,8 @@ function _getIcon(opts, type){
 }
 
 $.ui.fancytree.registerExtension({
-	name: "awesome",
-	version: "0.0.1",
+	name: "glyph",
+	version: "0.0.2",
 	// Default options for this extension.
 	options: {
 		prefix: "icon-",
@@ -45,8 +45,9 @@ $.ui.fancytree.registerExtension({
 			expanderOpen: "icon-caret-down",
 			folder: "icon-folder-close-alt",
 			folderOpen: "icon-folder-open-alt",
-			loading: "icon-refresh icon-spin"
+			loading: "icon-refresh icon-spin",
 			// loading: "icon-spinner icon-spin"
+			noExpander: ""
 		},
 		icon: null // TODO: allow callback here
 	},
@@ -56,12 +57,12 @@ $.ui.fancytree.registerExtension({
 	treeInit: function(ctx){
 		var tree = ctx.tree;
 		this._super(ctx);
-		tree.$container.addClass("fancytree-ext-awesome");
+		tree.$container.addClass("fancytree-ext-glyph");
 	},
 	nodeRenderStatus: function(ctx) {
 		var icon, span,
 			node = ctx.node,
-			opts = ctx.options.awesome,
+			opts = ctx.options.glyph,
 			// callback = opts.icon,
 			map = opts.map
 			// prefix = opts.prefix
@@ -73,29 +74,30 @@ $.ui.fancytree.registerExtension({
 		if( node.isRoot() ){
 			return;
 		}
-		if( node.hasChildren() !== false ){
-			span = $("span.fancytree-expander", node.span).get(0);
-			if( span ){
-				/*if( node.isLoading ){
-					icon = "loading";
-				}else*/ if( node.expanded ){
-					icon = "expanderOpen";
-				}else if( node.lazy && node.children == null ){
-					icon = "expanderLazy";
-				}else{
-					icon = "expanderClosed";
-				}
-				// icon = node.expanded ? "expanderOpen" : (node.lazy && node.children == null) ? "expanderLazy" : "expanderClosed";
-				span.className = "fancytree-expander " + map[icon];
+
+		span = $("span.fancytree-expander", node.span).get(0);
+		if( span ){
+			if( node.isLoading() ){
+				icon = "loading";
+			}else if( node.expanded ){
+				icon = "expanderOpen";
+			}else if( node.isUndefined() ){
+				icon = "expanderLazy";
+			}else if( node.hasChildren() ){
+				icon = "expanderClosed";
+			}else{
+				icon = "noExpander";
 			}
+			span.className = "fancytree-expander " + map[icon];
 		}
-		span = $("span.fancytree-checkbox", node.span).get(0);
+
+		span = $("span.fancytree-checkbox", node.tr || node.span).get(0);
 		if( span ){
 			icon = node.selected ? "checkboxSelected" : (node.partsel ? "checkboxUnknown" : "checkbox");
 			span.className = "fancytree-checkbox " + map[icon];
 		}
+
 		span = $("span.fancytree-icon", node.span).get(0);
-		// if( callback && callback(node))
 		if( span ){
 			if( node.folder ){
 				icon = node.expanded ? _getIcon(opts, "folderOpen") : _getIcon(opts, "folder");
@@ -107,7 +109,7 @@ $.ui.fancytree.registerExtension({
 	},
 	nodeSetStatus: function(ctx, status, message, details) {
 		var span,
-			opts = ctx.options.awesome,
+			opts = ctx.options.glyph,
 			node = ctx.node;
 
 		this._super(ctx, status, message, details);
@@ -115,7 +117,7 @@ $.ui.fancytree.registerExtension({
 		if(node.parent){
 			span = $("span.fancytree-expander", node.span).get(0);
 		}else{
-			span = $("span.fancytree-statusnode-wait, span.fancytree-statusnode-error", node.span).find("span.fancytree-expander").get(0);
+			span = $(".fancytree-statusnode-wait, .fancytree-statusnode-error", node[this.nodeContainerAttrName]).find("span.fancytree-expander").get(0);
 		}
 		if( status === "loading"){
 			// $("span.fancytree-expander", ctx.node.span).addClass(_getIcon(opts, "loading"));
