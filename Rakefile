@@ -2,6 +2,14 @@ require "bundler/gem_tasks"
 require 'fileutils'
 require 'fancytree/rails/version'
 
+def build_image_dependencies(source_code)
+  image_dependencies = Set.new source_code.scan(/url\("?images\/([-_.a-zA-Z0-9]+)"?\)/).map(&:first)
+  code = image_dependencies.inject("") do |acc, img|
+    acc += " *= depend_on_asset \"jquery-ui/#{img}\"\n"
+  end
+end
+
+
 namespace :fancytree do
   desc "Update FancyTree library from current version"
   task :update => :build do
@@ -9,18 +17,26 @@ namespace :fancytree do
 
       cd "dist" do
         js = FileList['*'].exclude(/\Askip*/)
-        FileUtils.cp_r(js, '../../../vendor/assets/javascripts/fancytree')
+        FileUtils.cp_r(js, '../../../app/assets/javascripts/fancytree')
 
         css_files = Dir.glob("skin*/*.css")
         css_files.each do |file|
-          mkdir_p "../../../vendor/assets/stylesheets/fancytree/#{File.dirname(file)}"
-          FileUtils.cp file, "../../../vendor/assets/stylesheets/fancytree/#{file}"
+          source_code = File.read(file)
+          #source_code.gsub!(/url\("?images\/([-_.a-zA-Z0-9]+)"?\)/, 'url(<%= image_path("fancytree/\1") %>)')
+          source_code.gsub!(/url\("icons.gif"\)/, 'url(<%= image_path("fancytree/icons.gif") %>)')
+          source_code.gsub!(/\A(\/\*!.+?\*\/\s)/m, "\\1\n/*\n#{build_image_dependencies(source_code)} */\n\n") unless build_image_dependencies(source_code).empty?
+
+          output_path = "../../../app/assets/stylesheets/fancytree/#{file}.erb"
+          mkdir_p File.dirname(output_path)
+          File.open(output_path, "w") do |out|
+            out.write(source_code)
+          end
         end
 
         images_files = Dir.glob("skin*/*.gif")
         images_files.each do |file|
-          mkdir_p "../../../vendor/assets/images/fancytree/#{File.dirname(file)}"
-          FileUtils.cp file, "../../../vendor/assets/images/fancytree/#{file}"
+          mkdir_p "../../../app/assets/images/fancytree/#{File.dirname(file)}"
+          FileUtils.cp file, "../../../app/assets/images/fancytree/#{file}"
         end
       end
 

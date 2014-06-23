@@ -53,10 +53,16 @@ Note that for awesome style (extension) to work you to:
 2. Enable ```awesome``` extension in Fancytree.
 3. Include extension code (```//= require fancytree/jquery.fancytree.awesome```) to ```app/assets/javascripts/application.js```.
 
+## Credits
+
+Pice of code of Raikefile copied form joliss/jquery-ui-rails. See
+3th-party for its license.
+
 ## Contributing
 
 1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
+2. Create your feature branch (`git checkout -b my-new-feature`). You
+   can use rake fancytree:update for semiautomatic update of mar10/fancytree
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request

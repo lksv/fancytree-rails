@@ -1,8 +1,24 @@
 /*!
- * Fancytree "Win8" 32x32 skin.
+ * Fancytree "Vista" skin.
  *
  * DON'T EDIT THE CSS FILE DIRECTLY, since it is automatically generated from
  * the LESS templates.
+ */
+/*
+both:
+   unselected background: #FCFCFC 'nearly white'
+   hover bar (unselected, inactive): #F8FCFE..#EFF9FE (border: #D8F0FA) 'very light blue'
+   active node: #F6FBFD..#D5EFFC (border: #99DEFD)  'light blue'
+   active node with hover: #F2F9FD..#C4E8FA (border: #B6E6FB)
+
+Tree view:
+   active node, tree inactive: #FAFAFB..#E5E5E5 (border: #D9D9D9) 'light gray, selected, but tree not active'
+
+List view:
+   selected bar: --> active bar
+   focus  bar: active + border 1px dotted #090402 (inside the blue border)
+
+   table left/right border: #EDEDED 'light gray'
  */
 /*******************************************************************************
  * Common Styles for Fancytree Skins.
@@ -69,13 +85,13 @@ span.fancytree-checkbox,
 span.fancytree-radio,
 span.fancytree-drag-helper-img,
 #fancytree-drop-marker {
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   display: inline-block;
   vertical-align: top;
   background-repeat: no-repeat;
   background-position: left;
-  background-image: url("icons.gif");
+  background-image: url(<%= image_path("fancytree/icons.gif") %>);
   background-position: 0px 0px;
 }
 /* Used by iconclass option */
@@ -84,8 +100,8 @@ span.fancytree-custom-icon {
 }
 /* Used by 'icon' node option: */
 .fancytree-container img {
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   margin-left: 3px;
   vertical-align: top;
   border-style: none;
@@ -111,51 +127,51 @@ span.fancytree-expander {
 }
 .fancytree-exp-n span.fancytree-expander,
 .fancytree-exp-n span.fancytree-expander:hover {
-  background-position: 0px -128px;
+  background-position: 0px -64px;
 }
 .fancytree-exp-nl span.fancytree-expander,
 .fancytree-exp-nl span.fancytree-expander:hover {
-  background-position: -32px -128px;
+  background-position: -16px -64px;
 }
 .fancytree-exp-c span.fancytree-expander {
-  background-position: 0px -160px;
+  background-position: 0px -80px;
 }
 .fancytree-exp-c span.fancytree-expander:hover {
-  background-position: -32px -160px;
+  background-position: -16px -80px;
 }
 .fancytree-exp-cl span.fancytree-expander {
-  background-position: 0px -192px;
+  background-position: 0px -96px;
 }
 .fancytree-exp-cl span.fancytree-expander:hover {
-  background-position: -32px -192px;
+  background-position: -16px -96px;
 }
 .fancytree-exp-cd span.fancytree-expander {
-  background-position: -128px -160px;
+  background-position: -64px -80px;
 }
 .fancytree-exp-cd span.fancytree-expander:hover {
-  background-position: -160px -160px;
+  background-position: -80px -80px;
 }
 .fancytree-exp-cdl span.fancytree-expander {
-  background-position: -128px -192px;
+  background-position: -64px -96px;
 }
 .fancytree-exp-cdl span.fancytree-expander:hover {
-  background-position: -160px -192px;
+  background-position: -80px -96px;
 }
 .fancytree-exp-e span.fancytree-expander,
 .fancytree-exp-ed span.fancytree-expander {
-  background-position: -64px -160px;
+  background-position: -32px -80px;
 }
 .fancytree-exp-e span.fancytree-expander:hover,
 .fancytree-exp-ed span.fancytree-expander:hover {
-  background-position: -96px -160px;
+  background-position: -48px -80px;
 }
 .fancytree-exp-el span.fancytree-expander,
 .fancytree-exp-edl span.fancytree-expander {
-  background-position: -64px -192px;
+  background-position: -32px -96px;
 }
 .fancytree-exp-el span.fancytree-expander:hover,
 .fancytree-exp-edl span.fancytree-expander:hover {
-  background-position: -96px -192px;
+  background-position: -48px -96px;
 }
 .fancytree-loading span.fancytree-expander,
 .fancytree-loading span.fancytree-expander:hover {
@@ -167,22 +183,22 @@ span.fancytree-expander {
  *----------------------------------------------------------------------------*/
 span.fancytree-checkbox {
   margin-left: 3px;
-  background-position: 0px -64px;
+  background-position: 0px -32px;
 }
 span.fancytree-checkbox:hover {
-  background-position: -32px -64px;
+  background-position: -16px -32px;
 }
 .fancytree-partsel span.fancytree-checkbox {
-  background-position: -128px -64px;
+  background-position: -64px -32px;
 }
 .fancytree-partsel span.fancytree-checkbox:hover {
-  background-position: -160px -64px;
+  background-position: -80px -32px;
 }
 .fancytree-selected span.fancytree-checkbox {
-  background-position: -64px -64px;
+  background-position: -32px -32px;
 }
 .fancytree-selected span.fancytree-checkbox:hover {
-  background-position: -96px -64px;
+  background-position: -48px -32px;
 }
 /*------------------------------------------------------------------------------
  * Radiobutton icon
@@ -191,22 +207,22 @@ span.fancytree-checkbox:hover {
  *----------------------------------------------------------------------------*/
 .fancytree-radio span.fancytree-checkbox {
   margin-left: 3px;
-  background-position: 0px -96px;
+  background-position: 0px -48px;
 }
 .fancytree-radio span.fancytree-checkbox:hover {
-  background-position: -32px -96px;
+  background-position: -16px -48px;
 }
 .fancytree-radio .fancytree-partsel span.fancytree-checkbox {
-  background-position: -128px -96px;
+  background-position: -64px -48px;
 }
 .fancytree-radio .fancytree-partsel span.fancytree-checkbox:hover {
-  background-position: -160px -96px;
+  background-position: -80px -48px;
 }
 .fancytree-radio .fancytree-selected span.fancytree-checkbox {
-  background-position: -64px -96px;
+  background-position: -32px -48px;
 }
 .fancytree-radio .fancytree-selected span.fancytree-checkbox:hover {
-  background-position: -96px -96px;
+  background-position: -48px -48px;
 }
 /*------------------------------------------------------------------------------
  * Node type icon
@@ -223,38 +239,38 @@ span.fancytree-icon {
 }
 /* Documents */
 .fancytree-ico-c span.fancytree-icon:hover {
-  background-position: -32px 0px;
+  background-position: -16px 0px;
 }
 .fancytree-has-children.fancytree-ico-c span.fancytree-icon {
-  background-position: -64px 0px;
+  background-position: -32px 0px;
 }
 .fancytree-has-children.fancytree-ico-c span.fancytree-icon:hover {
-  background-position: -96px 0px;
+  background-position: -48px 0px;
 }
 .fancytree-ico-e span.fancytree-icon {
-  background-position: -128px 0px;
+  background-position: -64px 0px;
 }
 .fancytree-ico-e span.fancytree-icon:hover {
-  background-position: -160px 0px;
+  background-position: -80px 0px;
 }
 /* Folders */
 .fancytree-ico-cf span.fancytree-icon {
-  background-position: 0px -32px;
+  background-position: 0px -16px;
 }
 .fancytree-ico-cf span.fancytree-icon:hover {
-  background-position: -32px -32px;
+  background-position: -16px -16px;
 }
 .fancytree-has-children.fancytree-ico-cf span.fancytree-icon {
-  background-position: -64px -32px;
+  background-position: -32px -16px;
 }
 .fancytree-has-children.fancytree-ico-cf span.fancytree-icon:hover {
-  background-position: -96px -32px;
+  background-position: -48px -16px;
 }
 .fancytree-ico-ef span.fancytree-icon {
-  background-position: -128px -32px;
+  background-position: -64px -16px;
 }
 .fancytree-ico-ef span.fancytree-icon:hover {
-  background-position: -160px -32px;
+  background-position: -80px -16px;
 }
 /* Status node icons */
 .fancytree-statusnode-wait span.fancytree-icon,
@@ -263,7 +279,7 @@ span.fancytree-icon {
   background-position: 0px 0px;
 }
 .fancytree-statusnode-error span.fancytree-icon {
-  background-position: 0px -224px;
+  background-position: 0px -112px;
 }
 /*------------------------------------------------------------------------------
  * Node titles and highlighting
@@ -300,28 +316,28 @@ div.fancytree-drag-helper.fancytree-drop-reject {
   border-color: red;
 }
 div.fancytree-drop-accept span.fancytree-drag-helper-img {
-  background-position: -64px -224px;
+  background-position: -32px -112px;
 }
 div.fancytree-drop-reject span.fancytree-drag-helper-img {
-  background-position: -32px -224px;
+  background-position: -16px -112px;
 }
 /*** Drop marker icon *********************************************************/
 #fancytree-drop-marker {
-  width: 64px;
+  width: 32px;
   position: absolute;
-  background-position: 0px -256px;
+  background-position: 0px -128px;
   margin: 0;
 }
 #fancytree-drop-marker.fancytree-drop-after,
 #fancytree-drop-marker.fancytree-drop-before {
-  width: 128px;
-  background-position: 0px -288px;
+  width: 64px;
+  background-position: 0px -144px;
 }
 #fancytree-drop-marker.fancytree-drop-copy {
-  background-position: -128px -256px;
+  background-position: -64px -128px;
 }
 #fancytree-drop-marker.fancytree-drop-move {
-  background-position: -64px -256px;
+  background-position: -32px -128px;
 }
 /*** Source node while dragging ***********************************************/
 span.fancytree-drag-source {
@@ -383,7 +399,7 @@ table.fancytree-ext-columnview span.fancytree-node.fancytree-expanded {
   background-color: #CBE8F6;
 }
 table.fancytree-ext-columnview .fancytree-has-children span.fancytree-cv-right {
-  background-position: 0px -160px;
+  background-position: 0px -80px;
   position: absolute;
   right: 3px;
 }
@@ -418,12 +434,6 @@ table.fancytree-ext-columnview .fancytree-has-children span.fancytree-cv-right {
   color: black;
   font-weight: normal;
 }
-/*!
- * Fancytree "Win8" skin.
- *
- * DON'T EDIT THE CSS FILE DIRECTLY, since it is automatically generated from
- * the LESS templates.
- */
 /*******************************************************************************
  * Styles specific to this skin.
  *
@@ -432,76 +442,45 @@ table.fancytree-ext-columnview .fancytree-has-children span.fancytree-cv-right {
 /*******************************************************************************
  * Node titles
  */
-span.fancytree-node {
+span.fancytree-title {
   border: 1px solid transparent;
 }
-span.fancytree-node:hover {
-  background-color: #E5F3FB;
-  border-color: #70C0E7;
+span.fancytree-title:hover {
+  background-color: #F2F7FD;
+  border-color: #B8D6FB;
 }
-.fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-focused {
-  border-color: #3399FF;
+span.fancytree-focused span.fancytree-title {
+  background-color: #EFEBDE;
+  outline: 1px dotted gray;
 }
-span.fancytree-node.fancytree-active,
-span.fancytree-node.fancytree-selected {
-  background-color: #F7F7F7;
-  border-color: #DEDEDE;
-}
-.fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-active,
-.fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-selected,
-span.fancytree-node.fancytree-active:hover,
-span.fancytree-node.fancytree-selected:hover {
-  background-color: #CBE8F6;
-  border-color: #26A0DA;
-}
-.fancytree-node.fancytree-selected {
+span.fancytree-selected span.fancytree-title {
   font-style: italic;
+}
+span.fancytree-active span.fancytree-title {
+  border: 1px solid #99DEFD;
+  background-color: #D8F0FA;
 }
 /*******************************************************************************
  * 'table' extension
  */
-table.fancytree-ext-table tbody tr td {
-  border: 1px solid #EDEDED;
+table.fancytree-ext-table {
+  border-collapse: collapse;
 }
-table.fancytree-ext-table tbody span.fancytree-node,
-table.fancytree-ext-table tbody span.fancytree-node:hover {
-  border: none;
-  background: none;
-}
-table.fancytree-ext-table tbody span.fancytree-title:hover {
-  border: none;
-  background: inherit;
-  background: transparent;
-  background: none;
-  filter: none;
-}
-table.fancytree-ext-table tbody tr:hover {
-  background-color: #E5F3FB;
-  outline: 1px solid #70C0E7;
-}
-table.fancytree-ext-table tbody tr.fancytree-focused span.fancytree-title {
-  outline: 1px dotted black;
-}
-table.fancytree-ext-table tbody tr.fancytree-active:hover,
-table.fancytree-ext-table tbody tr.fancytree-selected:hover {
-  background-color: #CBE8F6;
-  outline: 1px solid #26A0DA;
+table.fancytree-ext-table tbody tr.fancytree-focused {
+  background-color: #99DEFD;
 }
 table.fancytree-ext-table tbody tr.fancytree-active {
-  background-color: #F7F7F7;
-  outline: 1px solid #DEDEDE;
+  background-color: royalblue;
 }
 table.fancytree-ext-table tbody tr.fancytree-selected {
-  background-color: #F7F7F7;
+  background-color: #99FDDE;
 }
-table.fancytree-ext-table.fancytree-treefocus tbody tr.fancytree-active {
-  background-color: #CBE8F6;
-  outline: 1px solid #26A0DA;
+/*******************************************************************************
+ * 'columnview' extension
+ */
+table.fancytree-ext-columnview span.fancytree-node.fancytree-expanded {
+  background-color: #ccc;
 }
-table.fancytree-ext-table.fancytree-treefocus tbody tr.fancytree-selected {
-  background-color: #CBE8F6;
-}
-ul.fancytree-container {
-  font-size: 20pt;
-  padding: 6px;
+table.fancytree-ext-columnview span.fancytree-node.fancytree-active {
+  background-color: royalblue;
 }

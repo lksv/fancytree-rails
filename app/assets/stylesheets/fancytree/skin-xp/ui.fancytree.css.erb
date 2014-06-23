@@ -1,5 +1,5 @@
 /*!
- * Fancytree "Win8" skin.
+ * Fancytree "XP" skin.
  *
  * DON'T EDIT THE CSS FILE DIRECTLY, since it is automatically generated from
  * the LESS templates.
@@ -75,7 +75,7 @@ span.fancytree-drag-helper-img,
   vertical-align: top;
   background-repeat: no-repeat;
   background-position: left;
-  background-image: url("icons.gif");
+  background-image: url(<%= image_path("fancytree/icons.gif") %>);
   background-position: 0px 0px;
 }
 /* Used by iconclass option */
@@ -106,7 +106,6 @@ span.fancytree-expander {
 }
 .fancytree-exp-n span.fancytree-expander,
 .fancytree-exp-nl span.fancytree-expander {
-  background-image: none;
   cursor: default;
 }
 .fancytree-exp-n span.fancytree-expander,
@@ -424,74 +423,55 @@ table.fancytree-ext-columnview .fancytree-has-children span.fancytree-cv-right {
  * This section is automatically generated from the `ui-fancytree.less` template.
  ******************************************************************************/
 /*******************************************************************************
+ * Tree container
+ */
+ul.fancytree-container li {
+  background-image: url("vline.gif");
+  background-position: 0 0;
+}
+ul.fancytree-container li.fancytree-lastsib {
+  background-image: none;
+}
+ul.fancytree-no-connector > li {
+  background-image: none;
+}
+/*******************************************************************************
  * Node titles
  */
-span.fancytree-node {
-  border: 1px solid transparent;
+span.fancytree-title {
+  border: 0 solid transparent;
 }
-span.fancytree-node:hover {
-  background-color: #E5F3FB;
-  border-color: #70C0E7;
+span.fancytree-title:hover {
+  background-color: #F2F7FD;
+  border-color: #B8D6FB;
 }
-.fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-focused {
-  border-color: #3399FF;
+span.fancytree-focused span.fancytree-title {
+  outline: 1px dotted black;
+  background-color: #EFEBDE;
 }
-span.fancytree-node.fancytree-active,
-span.fancytree-node.fancytree-selected {
-  background-color: #F7F7F7;
-  border-color: #DEDEDE;
+.fancytree-folder span.fancytree-title {
+  font-weight: bold;
 }
-.fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-active,
-.fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-selected,
-span.fancytree-node.fancytree-active:hover,
-span.fancytree-node.fancytree-selected:hover {
-  background-color: #CBE8F6;
-  border-color: #26A0DA;
-}
-.fancytree-node.fancytree-selected {
+.fancytree-selected span.fancytree-title {
+  color: green;
   font-style: italic;
+}
+.fancytree-active span.fancytree-title {
+  background-color: #3169C6 !important;
+  color: white !important;
 }
 /*******************************************************************************
  * 'table' extension
  */
-table.fancytree-ext-table tbody tr td {
-  border: 1px solid #EDEDED;
+table.fancytree-ext-table {
+  border-collapse: collapse;
 }
-table.fancytree-ext-table tbody span.fancytree-node,
-table.fancytree-ext-table tbody span.fancytree-node:hover {
-  border: none;
-  background: none;
-}
-table.fancytree-ext-table tbody span.fancytree-title:hover {
-  border: none;
-  background: inherit;
-  background: transparent;
-  background: none;
-  filter: none;
-}
-table.fancytree-ext-table tbody tr:hover {
-  background-color: #E5F3FB;
-  outline: 1px solid #70C0E7;
-}
-table.fancytree-ext-table tbody tr.fancytree-focused span.fancytree-title {
-  outline: 1px dotted black;
-}
-table.fancytree-ext-table tbody tr.fancytree-active:hover,
-table.fancytree-ext-table tbody tr.fancytree-selected:hover {
-  background-color: #CBE8F6;
-  outline: 1px solid #26A0DA;
+table.fancytree-ext-table tbody tr.fancytree-focused {
+  background-color: #99DEFD;
 }
 table.fancytree-ext-table tbody tr.fancytree-active {
-  background-color: #F7F7F7;
-  outline: 1px solid #DEDEDE;
+  background-color: royalblue;
 }
 table.fancytree-ext-table tbody tr.fancytree-selected {
-  background-color: #F7F7F7;
-}
-table.fancytree-ext-table.fancytree-treefocus tbody tr.fancytree-active {
-  background-color: #CBE8F6;
-  outline: 1px solid #26A0DA;
-}
-table.fancytree-ext-table.fancytree-treefocus tbody tr.fancytree-selected {
-  background-color: #CBE8F6;
+  background-color: #99FDDE;
 }
