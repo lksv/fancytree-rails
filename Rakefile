@@ -3,9 +3,9 @@ require 'fileutils'
 require 'fancytree/rails/version'
 
 def build_image_dependencies(source_code)
-  image_dependencies = Set.new source_code.scan(/url\("?images\/([-_.a-zA-Z0-9]+)"?\)/).map(&:first)
+  image_dependencies = Set.new source_code.scan(/url\("(icons.gif)"?\)/).map(&:first)
   code = image_dependencies.inject("") do |acc, img|
-    acc += " *= depend_on_asset \"jquery-ui/#{img}\"\n"
+    acc += " *= depend_on_asset \"fancytree/#{img}\"\n"
   end
 end
 
@@ -22,9 +22,8 @@ namespace :fancytree do
         css_files = Dir.glob("skin*/*.css")
         css_files.each do |file|
           source_code = File.read(file)
-          #source_code.gsub!(/url\("?images\/([-_.a-zA-Z0-9]+)"?\)/, 'url(<%= image_path("fancytree/\1") %>)')
-          source_code.gsub!(/url\("icons.gif"\)/, 'url(<%= image_path("fancytree/icons.gif") %>)')
           source_code.gsub!(/\A(\/\*!.+?\*\/\s)/m, "\\1\n/*\n#{build_image_dependencies(source_code)} */\n\n") unless build_image_dependencies(source_code).empty?
+          source_code.gsub!(/url\("icons.gif"\)/, 'url(<%= image_path("fancytree/icons.gif") %>)')
 
           output_path = "../../../app/assets/stylesheets/fancytree/#{file}.erb"
           mkdir_p File.dirname(output_path)
