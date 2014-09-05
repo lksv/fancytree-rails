@@ -55,7 +55,7 @@ Note that for awesome style (extension) to work you to:
 
 ## Credits
 
-Pice of code of Raikefile copied form joliss/jquery-ui-rails. See
+Piece of code of Rakefile copied from joliss/jquery-ui-rails. See
 3th-party for its license.
 
 ## Contributing
