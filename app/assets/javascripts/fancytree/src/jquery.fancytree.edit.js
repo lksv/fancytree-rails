@@ -9,8 +9,8 @@
  * Released under the MIT license
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
- * @version 2.1.0
- * @date 2014-05-29T16:44
+ * @version 2.3.0
+ * @date 2014-08-17T10:39
  */
 
 ;(function($, window, document, undefined) {
@@ -117,6 +117,7 @@ $.ui.fancytree._FancytreeNodeClass.prototype.editStart = function(){
 				node.editEnd(true, event);
 				return false; // so we don't start editmode on Mac
 			}
+			event.stopPropagation();
 		}).blur(function(event){
 			return node.editEnd(true, event);
 		});

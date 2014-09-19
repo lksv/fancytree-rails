@@ -7,8 +7,8 @@
  * Released under the MIT license
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
- * @version 2.1.0
- * @date 2014-05-29T16:44
+ * @version 2.3.0
+ * @date 2014-08-17T10:39
  */
 
 /** Core Fancytree module.
@@ -614,7 +614,7 @@ FancytreeNode.prototype = /** @lends FancytreeNode# */{
 			var i, l, child, s, state, allSelected,someSelected,
 				children = node.children;
 
-			if( children ){
+			if( children && children.length ){
 				// check all children recursively
 				allSelected = true;
 				someSelected = false;
@@ -852,6 +852,16 @@ FancytreeNode.prototype = /** @lends FancytreeNode# */{
 	hasFocus: function() {
 		return (this.tree.hasFocus() && this.tree.focusNode === this);
 	},
+	/** Write to browser console if debugLevel >= 1 (prepending node info)
+	 *
+	 * @param {*} msg string or object or array of such
+	 */
+	info: function(msg){
+		if( this.tree.options.debugLevel >= 1 ) {
+			Array.prototype.unshift.call(arguments, this.toString());
+			consoleApply("info", arguments);
+		}
+	},
 	/** Return true if node is active (see also FancytreeNode#isSelected).
 	 * @returns {boolean}
 	 */
@@ -1063,6 +1073,9 @@ FancytreeNode.prototype = /** @lends FancytreeNode# */{
 		}
 		// Unlink this node from current parent
 		if( this.parent.children.length === 1 ) {
+			if( this.parent === targetParent ){
+				return; // #258
+			}
 			this.parent.children = this.parent.lazy ? [] : null;
 			this.parent.expanded = false;
 		} else {
@@ -1196,7 +1209,7 @@ FancytreeNode.prototype = /** @lends FancytreeNode# */{
 		// Navigate to node
 		function _goto(n){
 			if( n ){
-				n.makeVisible();
+				try { n.makeVisible(); } catch(e) {} // #272
 				// Node may still be hidden by a filter
 				if( ! $(n.span).is(":visible") ) {
 					n.debug("Navigate: skipping hidden node");
@@ -1467,12 +1480,19 @@ FancytreeNode.prototype = /** @lends FancytreeNode# */{
 	setFocus: function(flag){
 		return this.tree._callHook("nodeSetFocus", this, flag);
 	},
-	// TODO: setLazyNodeStatus
 	/**Select this node, i.e. check the checkbox.
 	 * @param {boolean} [flag=true] pass false to deselect
 	 */
 	setSelected: function(flag){
 		return this.tree._callHook("nodeSetSelected", this, flag);
+	},
+	/**Mark a lazy node as 'error', 'loading', or 'ok'.
+	 * @param {string} status 'error', 'ok'
+	 * @param {string} [message]
+	 * @param {string} [details]
+	 */
+	setStatus: function(status, message, details){
+		return this.tree._callHook("nodeSetStatus", this, status, message, details);
 	},
 	/**Rename this node.
 	 * @param {string} title
@@ -1665,6 +1685,9 @@ function Fancytree(widget) {
 				widget.options.lazyload.apply(this, arguments);
 			};
 		}
+	}
+	if( this.options && $.isFunction(this.options.loaderror) ) {
+		$.error("The 'loaderror' event was renamed since 2014-07-03. Use 'loadError' (with uppercase E) instead.");
 	}
 	this.ext = {}; // Active extension instances
 	// allow to init tree.data.foo from <div data-foo=''>
@@ -1883,17 +1906,17 @@ Fancytree.prototype = /** @lends Fancytree# */{
 	generateFormElements: function(selected, active) {
 		// TODO: test case
 		var nodeList,
-			selectedName = (selected !== false) ? "ft_" + this._id : selected,
+			selectedName = (selected !== false) ? "ft_" + this._id + "[]" : selected,
 			activeName = (active !== false) ? "ft_" + this._id + "_active" : active,
 			id = "fancytree_result_" + this._id,
-			$result = this.$container.find("div#" + id);
+			$result = $("#" + id);
 
 		if($result.length){
 			$result.empty();
 		}else{
 			$result = $("<div>", {
 				id: id
-			}).hide().appendTo(this.$container);
+			}).hide().insertAfter(this.$container);
 		}
 		if(selectedName){
 			nodeList = this.getSelectedNodes( this.options.selectMode === 3 );
@@ -1967,7 +1990,12 @@ Fancytree.prototype = /** @lends Fancytree# */{
 		}, true);
 		return match;
 	},
-	// TODO: getRoot()
+	/** Return the invisible system root node.
+	 * @returns {FancytreeNode}
+	 */
+	getRootNode: function() {
+		return this.rootNode;
+	},
 	/**
 	 * Return an array of selected nodes.
 	 * @param {boolean} [stopOnParents=false] only return the topmost selected
@@ -2373,7 +2401,7 @@ $.extend(Fancytree.prototype,
 	 *     data was rendered.
 	 */
 	nodeLoadChildren: function(ctx, source) {
-		var ajax, delay,
+		var ajax, delay, dfd,
 			tree = ctx.tree,
 			node = ctx.node;
 
@@ -2393,7 +2421,7 @@ $.extend(Fancytree.prototype,
 
 				node.debug("nodeLoadChildren waiting debug delay " + Math.round(delay) + "ms");
 				ajax.debugDelay = false;
-				source = $.Deferred(function (dfd) {
+				dfd = $.Deferred(function (dfd) {
 					setTimeout(function () {
 						$.ajax(ajax)
 							.done(function () {	dfd.resolveWith(this, arguments); })
@@ -2401,33 +2429,42 @@ $.extend(Fancytree.prototype,
 					}, delay);
 				});
 			}else{
-				source = $.ajax(ajax);
+				dfd = $.ajax(ajax);
 			}
 
-			// TODO: change 'pipe' to 'then' for jQuery 1.8
-			// $.pipe returns a new Promise with filtered  results
-			source = source.pipe(function (data, textStatus, jqXHR) {
-				var res;
+			// Defer the deferred: we want to be able to reject, even if ajax
+			// resolved ok.
+			source = new $.Deferred();
+			dfd.done(function (data, textStatus, jqXHR) {
+				var errorObj, res;
 				if(typeof data === "string"){
 					$.error("Ajax request returned a string (did you get the JSON dataType wrong?).");
 				}
-				// postProcess is similar to the standard dataFilter hook,
+				// postProcess is similar to the standard ajax dataFilter hook,
 				// but it is also called for JSONP
 				if( ctx.options.postProcess ){
-					res = tree._triggerNodeEvent("postProcess", ctx, ctx.originalEvent, {response: data, dataType: this.dataType});
+					res = tree._triggerNodeEvent("postProcess", ctx, ctx.originalEvent, {response: data, error: null, dataType: this.dataType});
+					if( res.error ) {
+						errorObj = $.isPlainObject(res.error) ? res.error : {message: res.error};
+						errorObj = tree._makeHookContext(node, null, errorObj);
+						source.rejectWith(this, [errorObj]);
+						return;
+					}
 					data = $.isArray(res) ? res : data;
+
 				} else if (data && data.hasOwnProperty("d") && ctx.options.enableAspx ) {
 					// Process ASPX WebMethod JSON object inside "d" property
 					data = (typeof data.d === "string") ? $.parseJSON(data.d) : data.d;
 				}
-				return data;
-			}, function (jqXHR, textStatus, errorThrown) {
-				return tree._makeHookContext(node, null, {
+				source.resolveWith(this, [data]);
+			}).fail(function (jqXHR, textStatus, errorThrown) {
+				var errorObj = tree._makeHookContext(node, null, {
 					error: jqXHR,
 					args: Array.prototype.slice.call(arguments),
 					message: errorThrown,
 					details: jqXHR.status + ": " + errorThrown
 				});
+				source.rejectWith(this, [errorObj]);
 			});
 		}
 
@@ -2437,7 +2474,7 @@ $.extend(Fancytree.prototype,
 			// node._isLoading = true;
 			tree.nodeSetStatus(ctx, "loading");
 
-			source.done(function () {
+			source.done(function (children) {
 				tree.nodeSetStatus(ctx, "ok");
 			}).fail(function(error){
 				var ctxErr;
@@ -2451,8 +2488,9 @@ $.extend(Fancytree.prototype,
 						message: error ? (error.message || error.toString()) : ""
 					});
 				}
-				tree._triggerNodeEvent("loaderror", ctxErr, null);
-				tree.nodeSetStatus(ctx, "error", ctxErr.message, ctxErr.details);
+				if( tree._triggerNodeEvent("loadError", ctxErr, null) !== false ) {
+					tree.nodeSetStatus(ctx, "error", ctxErr.message, ctxErr.details);
+				}
 			});
 		}
 		// $.when(source) resolves also for non-deferreds
@@ -2472,9 +2510,7 @@ $.extend(Fancytree.prototype,
 			_assert($.isArray(children), "expected array of children");
 			node._setChildren(children);
 			// trigger fancytreeloadchildren
-			// if( node.parent ) {
 			tree._triggerNodeEvent("loadChildren", node);
-			// }
 		// }).always(function(){
 		// 	node._isLoading = false;
 		});
@@ -3791,7 +3827,7 @@ $.extend($.ui.fancytree,
 	/** @lends Fancytree_Static# */
 	{
 	/** @type {string} */
-	version: "2.1.0",      // Set to semver by 'grunt release'
+	version: "2.3.0",      // Set to semver by 'grunt release'
 	/** @type {string} */
 	buildType: "production", // Set to 'production' by 'grunt build'
 	/** @type {int} */
