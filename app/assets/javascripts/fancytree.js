@@ -1,2 +1,2 @@
 //= require jquery
-//= require fancytree/jquery.fancytree-all.js
+//= require fancytree/jquery.fancytree-all

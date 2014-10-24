@@ -1,3 +1,10 @@
+## v2.4.1
+
+ * use fancytree v. 2.4.1
+ * stylesheets converted to SCSS and does not use ERB anymore
+ * minimized and concatenated file versions removed in favor of asset pipeline
+ * skins are working
+ 
 ## v2.3.0
 
  * use fancytree v. 2.3.0
