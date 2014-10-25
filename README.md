@@ -1,6 +1,6 @@
 # Fancytree::Rails
 
-`fancytree-rails` is a simple gem to add [FancyTree](https://github.com/mar10/fancytree) vendor files to the
+`fancytree-rails` is a simple gem to add [FancyTree](https://github.com/mar10/fancytree) JavaScript library files to the
 Rails asset pipeline.
 
 ## Installation
