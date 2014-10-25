@@ -1,6 +1,6 @@
 module Fancytree
   module Rails
-    VERSION = "2.3.0"
-    FANCYTREE_VERSION="v2.3.0"
+    VERSION = "2.4.1"
+    FANCYTREE_VERSION="v2.4.1"
   end
 end
