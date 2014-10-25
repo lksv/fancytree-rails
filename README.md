@@ -38,7 +38,7 @@ Or you can add core and required extensions only, for example:
 
 Extend stylesheet assets (defaults to the `lion` skin) by adding the following to `app/assets/stylesheets/application.css`:
 
-```
+```css
 *= require ui.fancytree
 ```
 
