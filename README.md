@@ -1,13 +1,15 @@
 # Fancytree::Rails
 
-fancytree-rails is a simple gem to add [FancyTree](https://github.com/mar10/fancytree) vendor files to the
+`fancytree-rails` is a simple gem to add [FancyTree](https://github.com/mar10/fancytree) JavaScript library files to the
 Rails asset pipeline.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'fancytree-rails'
+```ruby
+gem 'fancytree-rails'
+```
 
 And then execute:
 
@@ -19,39 +21,33 @@ Or install it yourself as:
 
 ## Usage
 
-In your Gemfile, add:
+Note that [jquery-ui-rails](https://github.com/joliss/jquery-ui-rails) also needs to be available.
 
+Require all javascript (core and all extensions) by adding the following to `app/assets/javascripts/application.js`:
 
-```ruby
-gem 'fancytree-rails'
-```
-
-Note that also [jquery-ui-rails](https://github.com/joliss/jquery-ui-rails) needs to be available.
-
-Require javascript to ```app/assets/javascripts/application.js```:
-
-```
+```js
 //= require fancytree
 ```
 
-In case you want to use *gridnav* add also ```//=require fancytree/jquery.fancytree.gridnav.js```
-
-Extend stylesheet assets ```app/assets/stylesheets/application.css```
-by:
-
+Or you can add core and required extensions only, for example:
+```js
+//= require fancytree/jquery.fancytree-core
+//= require fancytree/src/jquery.fancytree.glyph
+//= require fancytree/src/jquery.fancytree.gridnav
 ```
+
+Extend stylesheet assets (defaults to the `lion` skin) by adding the following to `app/assets/stylesheets/application.css`:
+
+```css
 *= require ui.fancytree
 ```
 
-or if you want to use another style include it directly:
+If you want to use another skin, include it's stylesheet instead:
+```css
+*= require fancytree/skin-vista/ui.fancytree
 ```
-*= require fancytree/skin-awesome/ui.fancytree
-```
-Note that for awesome style (extension) to work you to:
 
-1. Add ```font-awesome-rails``` gem (and include its style in application.css)
-2. Enable ```awesome``` extension in Fancytree.
-3. Include extension code (```//= require fancytree/jquery.fancytree.awesome```) to ```app/assets/javascripts/application.js```.
+Note that for `awesome` or `bootatrap` skin to work you need to use `font-awesome-rails` or [one](https://github.com/twbs/bootstrap-sass) [of](https://github.com/seyhunak/twitter-bootstrap-rails) the `bootstrap` gems accordingly.
 
 ## Credits
 
