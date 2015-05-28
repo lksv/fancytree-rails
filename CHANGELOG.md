@@ -1,3 +1,7 @@
+## v2.9.0
+
+ * use fancytree v. 2.9.0
+
 ## v2.3.0
 
  * use fancytree v. 2.3.0
