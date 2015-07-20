@@ -4,13 +4,13 @@
  * Render tree as table (aka 'treegrid', 'tabletree').
  * (Extension module for jquery.fancytree.js: https://github.com/mar10/fancytree/)
  *
- * Copyright (c) 2014, Martin Wendt (http://wwWendt.de)
+ * Copyright (c) 2008-2015, Martin Wendt (http://wwWendt.de)
  *
  * Released under the MIT license
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
- * @version 2.3.0
- * @date 2014-08-17T10:39
+ * @version 2.10.2
+ * @date 2015-07-02T08:11
  */
 
 ;(function($, window, document, undefined) {
@@ -74,7 +74,7 @@ function findPrevRowNode(node){
 
 $.ui.fancytree.registerExtension({
 	name: "table",
-	version: "0.2.0",
+	version: "0.2.1",
 	// Default options for this extension.
 	options: {
 		checkboxColumnIdx: null, // render the checkboxes into the this column index (default: nodeColumnIdx)
@@ -116,7 +116,7 @@ $.ui.fancytree.registerExtension({
 		tree.ariaPropName = "tr";
 		this.nodeContainerAttrName = "tr";
 
-		this._super(ctx);
+		this._superApply(arguments);
 
 		// standard Fancytree created a root UL
 		$(tree.rootNode.ul).remove();
@@ -135,7 +135,7 @@ $.ui.fancytree.registerExtension({
 //    },
 	nodeRemoveChildMarkup: function(ctx) {
 		var node = ctx.node;
-//		DT.debug("nodeRemoveChildMarkup()", node.toString());
+//		node.debug("nodeRemoveChildMarkup()");
 		node.visit(function(n){
 			if(n.tr){
 				$(n.tr).remove();
@@ -145,7 +145,7 @@ $.ui.fancytree.registerExtension({
 	},
 	nodeRemoveMarkup: function(ctx) {
 		var node = ctx.node;
-//		DT.debug("nodeRemoveMarkup()", node.toString());
+//		node.debug("nodeRemoveMarkup()");
 		if(node.tr){
 			$(node.tr).remove();
 			node.tr = null;
@@ -265,14 +265,12 @@ $.ui.fancytree.registerExtension({
 			node = ctx.node,
 			opts = ctx.options;
 
-		this._super(ctx);
+		this._superApply(arguments);
 		// Move checkbox to custom column
 		if(opts.checkbox && opts.table.checkboxColumnIdx != null ){
 			$cb = $("span.fancytree-checkbox", node.span).detach();
-			$(node.tr).find("td:first").html($cb);
+			$(node.tr).find("td").eq(+opts.table.checkboxColumnIdx).html($cb);
 		}
-		// Let user code write column content
-		// ctx.tree._triggerNodeEvent("renderColumns", node);
 		// Update element classes according to node state
 		if( ! node.isRoot() ){
 			this.nodeRenderStatus(ctx);
@@ -280,6 +278,7 @@ $.ui.fancytree.registerExtension({
 		if( !opts.table.customStatus && node.isStatusNode() ) {
 			// default rendering for status node: leave other cells empty
 		} else if ( opts.renderColumns ) {
+			// Let user code write column content
 			opts.renderColumns.call(ctx.tree, {type: "renderColumns"}, ctx);
 		}
 	},
@@ -288,7 +287,7 @@ $.ui.fancytree.registerExtension({
 			node = ctx.node,
 			opts = ctx.options;
 
-		this._super(ctx);
+		this._superApply(arguments);
 
 		$(node.tr).removeClass("fancytree-node");
 		// indent
@@ -343,11 +342,15 @@ $.ui.fancytree.registerExtension({
 				$(firstChild.tr).remove();
 			}
 		}
-		this._super(ctx, status, message, details);
+		return this._superApply(arguments);
 	},
 	treeClear: function(ctx) {
 		this.nodeRemoveChildMarkup(this._makeHookContext(this.rootNode));
-		return this._super(ctx);
+		return this._superApply(arguments);
+	},
+	treeDestroy: function(ctx) {
+		this.$container.find("tbody").empty();
+		this.$source && this.$source.removeClass("ui-helper-hidden");
 	}
 	/*,
 	treeSetFocus: function(ctx, flag) {

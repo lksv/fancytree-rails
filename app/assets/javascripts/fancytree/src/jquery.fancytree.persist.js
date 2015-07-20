@@ -4,37 +4,42 @@
  * Persist tree status in cookiesRemove or highlight tree nodes, based on a filter.
  * (Extension module for jquery.fancytree.js: https://github.com/mar10/fancytree/)
  *
- * @depends: jquery.cookie.js
+ * @depends: js-cookie or jquery-cookie
  *
- * Copyright (c) 2014, Martin Wendt (http://wwWendt.de)
+ * Copyright (c) 2008-2015, Martin Wendt (http://wwWendt.de)
  *
  * Released under the MIT license
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
- * @version 2.3.0
- * @date 2014-08-17T10:39
+ * @version 2.10.2
+ * @date 2015-07-02T08:11
  */
 
 ;(function($, window, document, undefined) {
 
 "use strict";
-
+/* global Cookies:false */
 
 /*******************************************************************************
  * Private functions and variables
  */
-function _assert(cond, msg){
-	msg = msg || "";
-	if(!cond){
-		$.error("Assertion failed " + msg);
-	}
-}
-
-var ACTIVE = "active",
+var cookieGetter, cookieRemover, cookieSetter,
+	_assert = $.ui.fancytree.assert,
+	ACTIVE = "active",
 	EXPANDED = "expanded",
 	FOCUS = "focus",
 	SELECTED = "selected";
 
+if( typeof Cookies === "function" ) {
+	// Assume https://github.com/js-cookie/js-cookie
+	cookieSetter = Cookies.set;
+	cookieGetter = Cookies.get;
+	cookieRemover = Cookies.remove;
+} else {
+	// Fall back to https://github.com/carhartl/jquery-cookie
+	cookieSetter = cookieGetter = $.cookie;
+	cookieRemover = $.removeCookie;
+}
 
 /* Recursively load lazy nodes
  * @param {string} mode 'load', 'expand', false
@@ -159,7 +164,7 @@ $.ui.fancytree.registerExtension({
 			secure: false
 		},
 		expandLazy: false,     // true: recursively expand and load lazy nodes
-		overrideSource: false, // true: cookie takes precedence over `source` data attributes.
+		overrideSource: true,  // true: cookie takes precedence over `source` data attributes.
 		store: "auto",         // 'cookie': force cookie, 'local': force localStore, 'session': force sessionStore
 		types: "active expanded focus selected"
 	},
@@ -169,18 +174,18 @@ $.ui.fancytree.registerExtension({
 		var ls = this._local.localStorage; // null, sessionStorage, or localStorage
 
 		if( value === undefined ) {
-			return ls ? ls.getItem(key) : $.cookie(key);
+			return ls ? ls.getItem(key) : cookieGetter(key);
 		} else if ( value === null ) {
 			if( ls ) {
 				ls.removeItem(key);
 			} else {
-				$.removeCookie(key);
+				cookieRemover(key);
 			}
 		} else {
 			if( ls ) {
 				ls.setItem(key, value);
 			} else {
-				$.cookie(key, value, this.options.persist.cookie);
+				cookieSetter(key, value, this.options.persist.cookie);
 			}
 		}
 	},
@@ -213,7 +218,7 @@ $.ui.fancytree.registerExtension({
 			instOpts = this.options.persist;
 
 		// For 'auto' or 'cookie' mode, the cookie plugin must be available
-		_assert(instOpts.store === "localStore" || $.cookie, "Missing required plugin for 'persist' extension: jquery.cookie.js");
+		_assert(instOpts.store === "localStore" || cookieGetter, "Missing required plugin for 'persist' extension: js.cookie.js or jquery.cookie.js");
 
 		local.cookiePrefix = instOpts.cookiePrefix || ("fancytree-" + tree._id + "-");
 		local.storeActive = instOpts.types.indexOf(ACTIVE) >= 0;
@@ -229,9 +234,9 @@ $.ui.fancytree.registerExtension({
 		// Bind init-handler to apply cookie state
 		tree.$div.bind("fancytreeinit", function(event){
 			var cookie, dfd, i, keyList, node,
-				prevFocus = $.cookie(local.cookiePrefix + FOCUS); // record this before node.setActive() overrides it;
+				prevFocus = local._data(local.cookiePrefix + FOCUS); // record this before node.setActive() overrides it;
 
-			tree.debug("COOKIE " + document.cookie);
+			// tree.debug("document.cookie:", document.cookie);
 
 			cookie = local._data(local.cookiePrefix + EXPANDED);
 			keyList = cookie && cookie.split(instOpts.cookieDelimiter);
@@ -254,7 +259,7 @@ $.ui.fancytree.registerExtension({
 							node = tree.getNodeByKey(keyList[i]);
 							if(node){
 								if(node.selected === undefined || instOpts.overrideSource && (node.selected === false)){
-	//								node.setSelected();
+//									node.setSelected();
 									node.selected = true;
 									node.renderStatus();
 								}
@@ -264,33 +269,53 @@ $.ui.fancytree.registerExtension({
 							}
 						}
 					}
+					// In selectMode 3 we have to fix the child nodes, since we
+					// only stored the selected *top* nodes
+					if( tree.options.selectMode === 3 ){
+						tree.visit(function(n){
+							if( n.selected ) {
+								n.fixSelection3AfterClick();
+								return "skip";
+							}
+						});
+					}
 				}
 				if(local.storeActive){
 					cookie = local._data(local.cookiePrefix + ACTIVE);
 					if(cookie && (opts.persist.overrideSource || !tree.activeNode)){
 						node = tree.getNodeByKey(cookie);
 						if(node){
-							node.setActive();
+							node.debug("persist: set active", cookie);
+							// We only want to set the focus if the container
+							// had the keyboard focus before
+							node.setActive(true, {noFocus: true});
 						}
 					}
 				}
 				if(local.storeFocus && prevFocus){
 					node = tree.getNodeByKey(prevFocus);
 					if(node){
-						node.setFocus();
+						// node.debug("persist: set focus", cookie);
+						if( tree.options.titlesTabbable ) {
+							$(node.span).find(".fancytree-title").focus();
+						} else {
+							$(tree.$container).focus();
+						}
+						// node.setFocus();
 					}
 				}
+				tree._triggerTreeEvent("restore", null, {});
 			});
 		});
 		// Init the tree
-		return this._super(ctx);
+		return this._superApply(arguments);
 	},
 	nodeSetActive: function(ctx, flag, opts) {
 		var res,
 			local = this._local;
 
 		flag = (flag !== false);
-		res = this._super(ctx, flag, opts);
+		res = this._superApply(arguments);
 
 		if(local.storeActive){
 			local._data(local.cookiePrefix + ACTIVE, this.activeNode ? this.activeNode.key : null);
@@ -303,7 +328,7 @@ $.ui.fancytree.registerExtension({
 			local = this._local;
 
 		flag = (flag !== false);
-		res = this._super(ctx, flag, opts);
+		res = this._superApply(arguments);
 
 		if(local.storeExpanded){
 			local._appendKey(EXPANDED, node.key, flag);
@@ -315,23 +340,35 @@ $.ui.fancytree.registerExtension({
 			local = this._local;
 
 		flag = (flag !== false);
-		res = this._super(ctx, flag);
+		res = this._superApply(arguments);
 
-		if(flag && local.storeFocus){
+		if( local.storeFocus ) {
 			local._data(local.cookiePrefix + FOCUS, this.focusNode ? this.focusNode.key : null);
 		}
 		return res;
 	},
 	nodeSetSelected: function(ctx, flag) {
-		var res,
+		var res, selNodes,
+			tree = ctx.tree,
 			node = ctx.node,
 			local = this._local;
 
 		flag = (flag !== false);
-		res = this._super(ctx, flag);
+		res = this._superApply(arguments);
 
 		if(local.storeSelected){
-			local._appendKey(SELECTED, node.key, flag);
+			if( tree.options.selectMode === 3 ){
+				// In selectMode 3 we only store the the selected *top* nodes.
+				// De-selecting a node may also de-select some parents, so we
+				// calculate the current status again
+				selNodes = $.map(tree.getSelectedNodes(true), function(n){
+					return n.key;
+				});
+				selNodes = selNodes.join(ctx.options.persist.cookieDelimiter);
+				local._data(local.cookiePrefix + SELECTED, selNodes);
+			} else {
+				local._appendKey(SELECTED, node.key, flag);
+			}
 		}
 		return res;
 	}
