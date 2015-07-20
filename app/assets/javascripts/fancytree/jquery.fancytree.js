@@ -7,8 +7,8 @@
  * Released under the MIT license
  * https://github.com/mar10/fancytree/wiki/LicenseInfo
  *
- * @version 2.9.0
- * @date 2015-04-19T13:41
+ * @version 2.10.2
+ * @date 2015-07-02T08:11
  */
 
 /** Core Fancytree module.
@@ -968,7 +968,7 @@ FancytreeNode.prototype = /** @lends FancytreeNode# */{
 	isLoading: function() {
 		return !!this._isLoading;
 	},
-	/**
+	/*
 	 * @deprecated since v2.4.0:  Use isRootNode() instead
 	 */
 	isRoot: function() {
@@ -1369,7 +1369,7 @@ FancytreeNode.prototype = /** @lends FancytreeNode# */{
 	render: function(force, deep) {
 		return this.tree._callHook("nodeRender", this, force, deep);
 	},
-	/** Create HTML markup for the node's outer <span> (expander, checkbox, icon, and title).
+	/** Create HTML markup for the node's outer &lt;span> (expander, checkbox, icon, and title).
 	 * @see Fancytree_Hooks#nodeRenderTitle
 	 */
 	renderTitle: function() {
@@ -1494,7 +1494,7 @@ FancytreeNode.prototype = /** @lends FancytreeNode# */{
 			// If a topNode was passed, make sure that it is never scrolled
 			// outside the upper border
 			if(topNode){
-				_assert(topNode.isRoot() || $(topNode.span).is(":visible"), "topNode must be visible");
+				_assert(topNode.isRootNode() || $(topNode.span).is(":visible"), "topNode must be visible");
 				if( topNodeY < newScrollTop ){
 					newScrollTop = topNodeY - topOfs;
 					// this.debug("    scrollIntoView(), TOP newScrollTop=", newScrollTop);
@@ -2579,7 +2579,7 @@ $.extend(Fancytree.prototype,
 					tree.nodeSetActive(ctx, true);
 				}
 				break;
-			case "enter":
+			case "return":
 				tree.nodeSetActive(ctx, true);
 				break;
 			case "backspace":
@@ -2725,7 +2725,7 @@ $.extend(Fancytree.prototype,
 				// We got {foo: 'abc', children: [...]}
 				// Copy extra properties to tree.data.foo
 				_assert($.isArray(children.children), "source must contain (or be) an array of children");
-				_assert(node.isRoot(), "source may only be an object for root nodes");
+				_assert(node.isRootNode(), "source may only be an object for root nodes");
 				metaData = children;
 				children = children.children;
 				delete metaData.children;
@@ -2793,7 +2793,7 @@ $.extend(Fancytree.prototype,
 		// FT.debug("nodeRemoveChildMarkup()", node.toString());
 		// TODO: Unlink attr.ftnode to support GC
 		if(node.ul){
-			if( node.isRoot() ) {
+			if( node.isRootNode() ) {
 				$(node.ul).empty();
 			} else {
 				$(node.ul).remove();
@@ -2843,6 +2843,9 @@ $.extend(Fancytree.prototype,
 		} else{
 			node.children = null;
 		}
+		if( !node.isRootNode() ) {
+			node.expanded = false;  // #449, #459
+		}
 		this.nodeRenderStatus(ctx);
 	},
 	/**Remove HTML markup for ctx.node and all its descendents.
@@ -2870,20 +2873,20 @@ $.extend(Fancytree.prototype,
 	 *
 	 * Note: if a node was created/removed, nodeRender() must be called for the
 	 *       parent.
-	 * <code>
-	 * <li id='KEY' ftnode=NODE>
-	 *     <span class='fancytree-node fancytree-expanded fancytree-has-children fancytree-lastsib fancytree-exp-el fancytree-ico-e'>
-	 *         <span class="fancytree-expander"></span>
-	 *         <span class="fancytree-checkbox"></span> // only present in checkbox mode
-	 *         <span class="fancytree-icon"></span>
-	 *         <a href="#" class="fancytree-title"> Node 1 </a>
-	 *     </span>
-	 *     <ul> // only present if node has children
-	 *         <li id='KEY' ftnode=NODE> child1 ... </li>
-	 *         <li id='KEY' ftnode=NODE> child2 ... </li>
-	 *     </ul>
-	 * </li>
-	 * </code>
+	 * &lt;code>
+	 * &lt;li id='KEY' ftnode=NODE>
+	 *     &lt;span class='fancytree-node fancytree-expanded fancytree-has-children fancytree-lastsib fancytree-exp-el fancytree-ico-e'>
+	 *         &lt;span class="fancytree-expander">&lt;/span>
+	 *         &lt;span class="fancytree-checkbox">&lt;/span> // only present in checkbox mode
+	 *         &lt;span class="fancytree-icon">&lt;/span>
+	 *         &lt;a href="#" class="fancytree-title"> Node 1 &lt;/a>
+	 *     &lt;/span>
+	 *     &lt;ul> // only present if node has children
+	 *         &lt;li id='KEY' ftnode=NODE> child1 ... &lt;/li>
+	 *         &lt;li id='KEY' ftnode=NODE> child2 ... &lt;/li>
+	 *     &lt;/ul>
+	 * &lt;/li>
+	 * &lt;/code>
 	 *
 	 * @param {EventData} ctx
 	 * @param {boolean} [force=false] re-render, even if html markup was already created
@@ -3035,7 +3038,8 @@ $.extend(Fancytree.prototype,
 			}
 		}
 	},
-	/** Create HTML for the node's outer <span> (expander, checkbox, icon, and title).
+	/** Create HTML inside the node's outer &lt;span> (i.e. expander, checkbox,
+	 * icon, and title).
 	 *
 	 * nodeRenderStatus() is implied.
 	 * @param {EventData} ctx
@@ -3366,9 +3370,10 @@ $.extend(Fancytree.prototype,
 		}
 		// Trigger expand/collapse after expanding
 		dfd.done(function(){
-			if( flag && opts.autoScroll && !noAnimation ) {
+			var	lastChild = node.getLastChild();
+			if( flag && opts.autoScroll && !noAnimation && lastChild ) {
 				// Scroll down to last child, but keep current node visible
-				node.getLastChild().scrollIntoView(true, {topNode: node}).always(function(){
+				lastChild.scrollIntoView(true, {topNode: node}).always(function(){
 					if( !noEvents ) {
 						ctx.tree._triggerNodeEvent(flag ? "expand" : "collapse", ctx);
 					}
@@ -3662,6 +3667,8 @@ $.extend(Fancytree.prototype,
 	 * @param {EventData} ctx
 	 */
 	treeDestroy: function(ctx) {
+		this.$div.find(">ul.fancytree-container").remove();
+		this.$source && this.$source.removeClass("ui-helper-hidden");
 	},
 	/** Widget was (re-)initialized.
 	 * @param {EventData} ctx
@@ -3921,9 +3928,6 @@ $.widget("ui.fancytree",
 	destroy: function() {
 		this._unbind();
 		this.tree._callHook("treeDestroy", this.tree);
-		// this.element.removeClass("ui-widget ui-widget-content ui-corner-all");
-		this.tree.$div.find(">ul.fancytree-container").remove();
-		this.$source && this.$source.removeClass("ui-helper-hidden");
 		// In jQuery UI 1.8, you must invoke the destroy method from the base widget
 		$.Widget.prototype.destroy.call(this);
 		// TODO: delete tree and nodes to make garbage collect easier?
@@ -4075,7 +4079,7 @@ $.extend($.ui.fancytree,
 	/** @lends Fancytree_Static# */
 	{
 	/** @type {string} */
-	version: "2.9.0",      // Set to semver by 'grunt release'
+	version: "2.10.2",      // Set to semver by 'grunt release'
 	/** @type {string} */
 	buildType: "production", // Set to 'production' by 'grunt build'
 	/** @type {int} */
